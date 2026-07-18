@@ -1,0 +1,346 @@
+-- Tables for Phase 3
+-- Creation of the tables for the business database
+
+-- ========================================
+-- EXECUTION INSTRUCTIONS
+-- ========================================
+-- Step 1: Run this file first
+-- This script creates all database tables
+-- ========================================
+
+-- Table: Child
+-- Stores basic information about children in the system
+CREATE TABLE Child (
+    ChildId NUMBER PRIMARY KEY,
+    FirstName VARCHAR2(40) NOT NULL,
+    LastName VARCHAR2(40) NOT NULL,
+    DateOfBirth DATE NOT NULL,
+    Gender CHAR(1) NOT NULL,
+    DateAdmitted DATE NOT NULL,
+    Status VARCHAR2(40) NOT NULL,
+    CONSTRAINT chk_gender CHECK (Gender IN ('M','F'))
+);
+
+-- Table: Foster_Parent
+-- Stores details of approved foster families
+CREATE TABLE Foster_Parent (
+    FosterParentId NUMBER PRIMARY KEY,
+    FamilyName VARCHAR2(40) NOT NULL,
+    ContactNumber VARCHAR2(40) NOT NULL,
+    ApprovalStatus VARCHAR2(40) NOT NULL,
+    Address VARCHAR2(100) NOT NULL
+);
+
+-- Table: Fostering
+-- Links children to their assigned foster parents
+CREATE TABLE Fostering (
+    ChildId NUMBER NOT NULL REFERENCES Child(ChildId),
+    FosterParentId NUMBER NOT NULL REFERENCES Foster_Parent(FosterParentId),
+    constraint PK_Fostering primary key (ChildId)
+);
+
+-- Table: Event
+-- Stores details of events hosted by the organisation
+CREATE TABLE Event (
+    EventId NUMBER PRIMARY KEY,
+    EventName VARCHAR2(50) NOT NULL,
+    EventDate DATE NOT NULL,
+    Location VARCHAR2(100) NOT NULL
+);
+
+-- Table: Alumni
+-- Stores information about children who have left the system
+CREATE TABLE Alumni (
+    AlumniId NUMBER PRIMARY KEY,
+    ChildId NUMBER NOT NULL REFERENCES Child(ChildId),
+    AlumniName VARCHAR2(40) NOT NULL,
+    ContactInfo VARCHAR2(40) NOT NULL,
+    AlumniType VARCHAR2(40) NOT NULL
+);
+
+-- Table: Volunteer
+-- Stores volunteer details and skills
+CREATE TABLE Volunteer (
+    VolunteerId NUMBER PRIMARY KEY,
+    FirstName VARCHAR2(40) NOT NULL,
+    LastName VARCHAR2(40) NOT NULL,
+    ContactInfo VARCHAR2(40) NOT NULL,
+    Skill VARCHAR2(40) NOT NULL
+);
+
+-- Table: Adoptive_Parent
+-- Stores adoptive parent information
+CREATE TABLE Adoptive_Parent (
+    AdoptiveId NUMBER PRIMARY KEY,
+    FamilyName VARCHAR2(40) NOT NULL,
+    Address VARCHAR2(100) NOT NULL,
+    AdoptionStatus VARCHAR2(40) NOT NULL,
+    ContactDetails VARCHAR2(40) NOT NULL
+);
+
+-- Table: Adoption
+-- Records adoption details between children and adoptive parents
+CREATE TABLE Adoption (
+    AdoptionId NUMBER PRIMARY KEY,
+    ChildId NUMBER NOT NULL REFERENCES Child(ChildId),
+    AdoptiveId NUMBER NOT NULL REFERENCES Adoptive_Parent(AdoptiveId),
+    AdoptionDate DATE NOT NULL,
+    AdoptionType VARCHAR2(40) NOT NULL
+);
+
+-- Table: Biological_Parent
+-- Stores biological parent information
+CREATE TABLE Biological_Parent (
+    BioParentId NUMBER PRIMARY KEY,
+    FirstName VARCHAR2(40) NOT NULL,
+    LastName VARCHAR2(40) NOT NULL,
+    ContactInfo VARCHAR2(40) NOT NULL,
+    Address VARCHAR2(100) NOT NULL
+);
+
+-- Table: Counsellor
+-- Stores counsellor information for child support
+CREATE TABLE Counsellor (
+    CounsellorId NUMBER PRIMARY KEY,
+    FirstName VARCHAR2(40) NOT NULL,
+    LastName VARCHAR2(40) NOT NULL,
+    ContactInfo VARCHAR2(40) NOT NULL,
+    Qualification VARCHAR2(40) NOT NULL
+);
+
+-- Table: Employee
+-- Stores employee information
+CREATE TABLE Employee (
+    EmployeeId NUMBER PRIMARY KEY,
+    FirstName VARCHAR2(40) NOT NULL,
+    LastName VARCHAR2(40) NOT NULL,
+    Job_Role VARCHAR2(40) NOT NULL,
+    ContactInfo VARCHAR2(40) NOT NULL
+);
+
+-- Table: Counselling_Case
+-- Links children to counsellors for support cases
+CREATE TABLE Counselling_Case (
+    CaseId NUMBER PRIMARY KEY,
+    ChildId NUMBER NOT NULL REFERENCES Child(ChildId),
+    CounsellorId NUMBER NOT NULL REFERENCES Counsellor(CounsellorId)
+);
+
+-- Table: Training_Program
+-- Stores training program details
+CREATE TABLE Training_Program (
+    ProgramId NUMBER PRIMARY KEY,
+    ProgramName VARCHAR2(40) NOT NULL,
+    ProgramDescription VARCHAR2(100) NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE NOT NULL
+);
+
+-- Table: Healthcare_Provider
+-- Stores healthcare provider details
+CREATE TABLE Healthcare_Provider (
+    ProviderId NUMBER PRIMARY KEY,
+    ProviderName VARCHAR2(40) NOT NULL,
+    Specialization VARCHAR2(40) NOT NULL,
+    ContactInfo VARCHAR2(40) NOT NULL
+);
+
+-- Table: Teacher
+-- Stores teacher or tutor details
+CREATE TABLE Teacher (
+    TeacherId NUMBER PRIMARY KEY,
+    FirstName VARCHAR2(40) NOT NULL,
+    LastName VARCHAR2(40) NOT NULL,
+    ContactInfo VARCHAR2(40) NOT NULL,
+    Subject VARCHAR2(40) NOT NULL
+);
+
+-- Table: Board_Member
+-- Stores board member details
+CREATE TABLE Board_Member (
+    BoardId NUMBER PRIMARY KEY,
+    FirstName VARCHAR2(40) NOT NULL,
+    LastName VARCHAR2(40) NOT NULL,
+    BoardPosition VARCHAR2(40) NOT NULL,
+    ContactInfo VARCHAR2(40) NOT NULL
+);
+
+-- Table: Sponsor
+-- Stores sponsor information
+CREATE TABLE Sponsor (
+    SponsorId NUMBER PRIMARY KEY,
+    SponsorName VARCHAR2(40) NOT NULL,
+    SponsorshipType VARCHAR2(40) NOT NULL
+);
+
+-- Table: Sponsorship
+-- Records sponsorship contributions
+CREATE TABLE Sponsorship (
+    SponsorshipId NUMBER PRIMARY KEY,
+    SponsorId NUMBER NOT NULL REFERENCES Sponsor(SponsorId),
+    Amount NUMBER(20,2) NOT NULL,
+    StartDate DATE NOT NULL
+);
+
+-- Table: Donor
+-- Stores donor information
+CREATE TABLE Donor (
+    DonorId NUMBER PRIMARY KEY,
+    DonorName VARCHAR2(40) NOT NULL,
+    ContactInfo VARCHAR2(40) NOT NULL,
+    DonorType VARCHAR2(40) NOT NULL
+);
+
+-- Table: Donation
+-- Records donations made by donors
+CREATE TABLE Donation (
+    DonationId NUMBER PRIMARY KEY,
+    DonorId NUMBER NOT NULL REFERENCES Donor(DonorId),
+    Amount NUMBER(20,2) NOT NULL,
+    DonationDate DATE NOT NULL
+);
+
+-- Table: Financial_Record
+-- Stores financial tracking records for donations and sponsorships
+CREATE TABLE Financial_Record (
+    RecordId NUMBER PRIMARY KEY,
+    DonationId NUMBER REFERENCES Donation(DonationId),
+    SponsorshipId NUMBER REFERENCES Sponsorship(SponsorshipId),
+    RecordType VARCHAR2(40) NOT NULL,
+    RecordDescription VARCHAR2(100) NOT NULL,
+    RecordDate DATE NOT NULL,
+    CONSTRAINT chk_record_type 
+    CHECK (RecordType IN ('Donation','Sponsorship','Expense'))
+);
+
+-- Table: Government
+-- Stores government or regulatory authority details
+CREATE TABLE Government(
+    GovernmentId NUMBER PRIMARY KEY,
+    GovernmentName VARCHAR2(40) NOT NULL,
+    Department VARCHAR2(100) NOT NULL
+);
+
+-- Table: Inspection
+-- Records inspections conducted by authorities
+CREATE TABLE Inspection (
+    InspectionId NUMBER PRIMARY KEY,
+    GovernmentId NUMBER REFERENCES Government(GovernmentId),
+    EventId NUMBER REFERENCES Event(EventId),
+    InspectionDate DATE NOT NULL,
+    Outcome VARCHAR2(100) NOT NULL
+);
+
+-- Table: Alumni_Event
+-- Tracks alumni participation in events
+CREATE TABLE Alumni_Event (
+    AlumniId NUMBER NOT NULL REFERENCES Alumni(AlumniId),
+    EventId NUMBER NOT NULL REFERENCES Event(EventId),
+    ParticipationStatus VARCHAR2(40) NOT NULL,
+    constraint PK_Alumni_Event primary key (AlumniId, EventId)
+);
+
+-- Table: Child_Events
+-- Tracks child participation in events
+CREATE TABLE Child_Events (
+    ChildId NUMBER NOT NULL REFERENCES Child(ChildId),
+    EventId NUMBER NOT NULL REFERENCES Event(EventId),
+    ParticipationStatus VARCHAR2(40) NOT NULL,
+    constraint PK_Child_Events primary key (ChildId, EventId)
+);
+
+-- Table: Foster_Event
+-- Links foster parents to events
+CREATE TABLE Foster_Event (
+    FosterParentId NUMBER NOT NULL REFERENCES Foster_Parent(FosterParentId),
+    EventId NUMBER NOT NULL REFERENCES Event(EventId),
+    constraint PK_Foster_Event primary key (FosterParentId, EventId)
+);
+
+-- Table: Volunteer_Event
+-- Links volunteers to events
+CREATE TABLE Volunteer_Event (
+    VolunteerId NUMBER NOT NULL REFERENCES Volunteer(VolunteerId),
+    EventId NUMBER NOT NULL REFERENCES Event(EventId),
+    constraint PK_Volunteer_Event primary key (VolunteerId, EventId)
+);
+
+-- Table: Volunteer_Child
+-- Links volunteers to children they assist
+CREATE TABLE Volunteer_Child (
+    VolunteerId NUMBER NOT NULL REFERENCES Volunteer(VolunteerId),
+    ChildId NUMBER NOT NULL REFERENCES Child(ChildId),
+    AssistanceType VARCHAR2(40) NOT NULL,
+    constraint PK_Volunteer_Child primary key (VolunteerId, ChildId)
+);
+
+-- Table: Child_BiologicalParent
+-- Links children to their biological parents
+CREATE TABLE Child_BiologicalParent (
+    ChildId NUMBER NOT NULL REFERENCES Child(ChildId),
+    BioParentId NUMBER NOT NULL REFERENCES Biological_Parent(BioParentId),
+    RelationshipType VARCHAR2(40) NOT NULL,
+    constraint PK_Child_BiologicalParent primary key (ChildId, BioParentId)
+);
+
+-- Table: Child_Employee
+-- Links children to employees responsible for them
+CREATE TABLE Child_Employee (
+    ChildId NUMBER NOT NULL REFERENCES Child(ChildId),
+    EmployeeId NUMBER NOT NULL REFERENCES Employee(EmployeeId),
+    CompletionStatus VARCHAR2(40) NOT NULL,
+    constraint PK_Child_Employee primary key (ChildId, EmployeeId)
+);
+
+-- Table: Employee_Training
+-- Tracks employee participation in training programs
+CREATE TABLE Employee_Training (
+    EmployeeId NUMBER NOT NULL REFERENCES Employee(EmployeeId),
+    ProgramId NUMBER NOT NULL REFERENCES Training_Program(ProgramId),
+    CompletionStatus VARCHAR2(40) NOT NULL,
+    constraint PK_Employee_Training primary key (EmployeeId, ProgramId)
+);
+
+-- Table: Child_Healthcare
+-- Records healthcare visits for children
+CREATE TABLE Child_Healthcare (
+    ChildId NUMBER NOT NULL REFERENCES Child(ChildId),
+    ProviderId NUMBER NOT NULL REFERENCES Healthcare_Provider(ProviderId),
+    VisitDate DATE NOT NULL,
+    Notes VARCHAR2(100) NOT NULL,
+    constraint PK_Child_Healthcare primary key (ChildId, ProviderId)
+);
+
+-- Table: Child_Teacher
+-- Links children to teachers or tutors
+CREATE TABLE Child_Teacher (
+    TeacherId NUMBER NOT NULL REFERENCES Teacher(TeacherId),
+    ChildId NUMBER NOT NULL REFERENCES Child(ChildId),
+    StartDate DATE NOT NULL,
+    constraint PK_Child_Teacher primary key (TeacherId, ChildId)
+);
+
+-- Table: Board_Training
+-- Tracks training programs approved by board members
+CREATE TABLE Board_Training (
+    BoardId NUMBER NOT NULL REFERENCES Board_Member(BoardId),
+    ProgramId NUMBER NOT NULL REFERENCES Training_Program(ProgramId),
+    ApprovalStatus VARCHAR2(40) NOT NULL,
+    constraint PK_Board_Training primary key (BoardId, ProgramId)
+);
+
+-- Table: Board_Event
+-- Links board members to events they oversee
+CREATE TABLE Board_Event (
+    BoardId NUMBER NOT NULL REFERENCES Board_Member(BoardId),
+    EventId NUMBER NOT NULL REFERENCES Event(EventId),
+    constraint PK_Board_Event primary key (BoardId, EventId)
+);
+
+-- Table: Board_Finance
+-- Links board members to financial records they oversee
+CREATE TABLE Board_Finance (
+    BoardId NUMBER NOT NULL REFERENCES Board_Member(BoardId),
+    RecordId NUMBER NOT NULL REFERENCES Financial_Record(RecordId),
+    constraint PK_Board_Finance primary key (BoardId, RecordId)
+);

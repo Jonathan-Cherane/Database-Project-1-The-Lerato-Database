@@ -1,0 +1,73 @@
+-- Insertion Scripts for Phase 3
+-- Data to be inserted for the tables
+
+-- ========================================
+-- EXECUTION INSTRUCTIONS
+-- ========================================
+-- Step 2: Run this file after creating tables
+-- This script inserts sample data into the tables
+-- ========================================
+
+-- Child
+INSERT INTO Child VALUES (1, 'John', 'Doe', DATE '2010-05-10', 'M', DATE '2020-01-01', 'Active');
+INSERT INTO Child VALUES (2, 'Alice', 'Smith', DATE '2012-08-15', 'F', DATE '2021-03-10', 'Active');
+INSERT INTO Child VALUES (3, 'Brian', 'Mokoena', DATE '2009-11-20', 'M', DATE '2019-06-12', 'Inactive');
+
+-- Foster Parent
+INSERT INTO Foster_Parent VALUES (1, 'Nkosi', '0812345678', 'Approved', 'Johannesburg');
+INSERT INTO Foster_Parent VALUES (2, 'Naidoo', '0823456789', 'Approved', 'Pretoria');
+
+-- Fostering
+INSERT INTO Fostering VALUES (1, 1);
+INSERT INTO Fostering VALUES (2, 2);
+
+-- Event
+INSERT INTO Event VALUES (1, 'Fundraiser', DATE '2025-06-01', 'Sandton');
+INSERT INTO Event VALUES (2, 'Sports Day', DATE '2025-07-10', 'Soweto');
+
+-- Volunteer
+INSERT INTO Volunteer VALUES (1, 'Sarah', 'Jones', 'sarah@gmail.com', 'Teaching');
+INSERT INTO Volunteer VALUES (2, 'Mike', 'Brown', 'mike@gmail.com', 'Coaching');
+
+-- Volunteer_Child
+INSERT INTO Volunteer_Child VALUES (1, 1, 'Tutoring');
+INSERT INTO Volunteer_Child VALUES (2, 2, 'Coaching');
+
+-- Child_Events
+INSERT INTO Child_Events VALUES (1, 1, 'Attended');
+INSERT INTO Child_Events VALUES (2, 2, 'Registered');
+
+-- Volunteer_Event
+INSERT INTO Volunteer_Event VALUES (1, 1);
+INSERT INTO Volunteer_Event VALUES (2, 2);
+
+-- Donor
+INSERT INTO Donor VALUES (1, 'ABC Corp', 'abc@email.com', 'Organization');
+INSERT INTO Donor VALUES (2, 'Jane Doe', 'jane@email.com', 'Individual');
+
+-- Sponsor
+INSERT INTO Sponsor VALUES (1, 'XYZ Ltd', 'Corporate');
+
+-- Sponsorship
+INSERT INTO Sponsorship VALUES (1, 1, 10000, DATE '2025-01-01');
+
+-- Financial_Record
+INSERT INTO Financial_Record VALUES (1, 1, NULL, 'Donation', 'Donation received', DATE '2025-01-10');
+INSERT INTO Financial_Record VALUES (2, NULL, 1, 'Sponsorship', 'Sponsorship received', DATE '2025-01-01');
+
+-- Board_Member
+INSERT INTO Board_Member VALUES (1, 'David', 'Miller', 'Chairperson', 'david@email.com');
+
+-- Board_Finance
+INSERT INTO Board_Finance VALUES (1, 1);
+INSERT INTO Board_Finance VALUES (1, 2);
+
+-- Government
+INSERT INTO Government VALUES (1, 'Department of Social Development', 'Child Welfare');
+
+
+-- Inspection
+INSERT INTO Inspection VALUES (1, 1, 1, DATE '2025-03-01', 'Passed');
+
+-- Save all changes
+COMMIT;
